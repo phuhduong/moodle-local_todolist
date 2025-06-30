@@ -1,4 +1,6 @@
 <?php
+global $OUTPUT, $PAGE, $USER;
+
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/../../local/todolist/classes/TaskManager.php');
 require_once(__DIR__ . '/../../local/todolist/classes/Task.php');
@@ -17,52 +19,80 @@ echo $OUTPUT->header();
 $taskmanager = new TaskManager($USER->id);
 $tasks = $taskmanager->loadTasks();
 
-// Add Task Form
-echo '<form method="post" action="' . new moodle_url('/local/todolist/actions/add.php') . '">';
-echo '<input type="text" name="name" placeholder="New task name" required>';
-echo '<input type="hidden" name="sesskey" value="' . sesskey() . '">';
-echo '<button type="submit">' . get_string('addtask', 'local_todolist') . '</button>';
-echo '</form>';
+?>
+    <div>
+        <input type="text" id="newtaskname" placeholder="New task name">
+        <button id="addtask">Add</button>
+    </div>
 
-echo '<hr>';
+    <hr>
 
-if (empty($tasks)) {
-    echo html_writer::div(get_string('notasks', 'local_todolist'));
-} else {
-    echo html_writer::start_tag('ul');
+    <ul id="tasklist">
+        <?php foreach ($tasks as $task): ?>
+            <li data-id="<?= $task->getId() ?>">
+            <span class="taskname">
+                <?= $task->isCompleted() ? '<del>' . s($task->getName()) . '</del>' : s($task->getName()) ?>
+            </span>
+                <button class="toggle">Toggle</button>
+                <input type="text" class="renameinput" value="<?= s($task->getName()) ?>">
+                <button class="rename">Rename</button>
+                <button class="delete">Delete</button>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
-    foreach ($tasks as $task) {
-        echo html_writer::start_tag('li');
+    <script>
+        document.getElementById('addtask').addEventListener('click', () => {
+            const name = document.getElementById('newtaskname').value.trim();
+            if (!name) return alert("Enter task name");
 
-        $taskname = $task->isCompleted() ? '<del>' . s($task->getName()) . '</del>' : s($task->getName());
-        echo $taskname . ' ';
+            fetch('ajax.php?action=add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ name })
+            }).then(res => res.json())
+                .then(data => location.reload())
+                .catch(err => alert("Failed to add task"));
+        });
 
-        // Toggle
-        echo '<form method="post" action="' . new moodle_url('/local/todolist/actions/toggle.php') . '" style="display:inline">';
-        echo '<input type="hidden" name="id" value="' . $task->getId() . '">';
-        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '">';
-        echo '<button type="submit">' . get_string('completed', 'local_todolist') . '</button>';
-        echo '</form> ';
+        document.querySelectorAll('.toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.closest('li').dataset.id;
+                fetch('ajax.php?action=toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ id })
+                }).then(res => res.json())
+                    .then(data => location.reload());
+            });
+        });
 
-        // Rename
-        echo '<form method="post" action="' . new moodle_url('/local/todolist/actions/rename.php') . '" style="display:inline">';
-        echo '<input type="hidden" name="id" value="' . $task->getId() . '">';
-        echo '<input type="text" name="name" value="' . s($task->getName()) . '" required>';
-        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '">';
-        echo '<button type="submit">' . get_string('edit', 'local_todolist') . '</button>';
-        echo '</form> ';
+        document.querySelectorAll('.rename').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const li = btn.closest('li');
+                const id = li.dataset.id;
+                const name = li.querySelector('.renameinput').value.trim();
+                fetch('ajax.php?action=rename', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ id, name })
+                }).then(res => res.json())
+                    .then(data => location.reload());
+            });
+        });
 
-        // Delete
-        echo '<form method="post" action="' . new moodle_url('/local/todolist/actions/delete.php') . '" style="display:inline">';
-        echo '<input type="hidden" name="id" value="' . $task->getId() . '">';
-        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '">';
-        echo '<button type="submit">' . get_string('delete', 'local_todolist') . '</button>';
-        echo '</form>';
+        document.querySelectorAll('.delete').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.closest('li').dataset.id;
+                fetch('ajax.php?action=delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ id })
+                }).then(res => res.json())
+                    .then(data => location.reload());
+            });
+        });
+    </script>
 
-        echo html_writer::end_tag('li');
-    }
-
-    echo html_writer::end_tag('ul');
-}
-
+<?php
 echo $OUTPUT->footer();

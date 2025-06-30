@@ -76,4 +76,10 @@ class TaskManager {
 
         $DB->delete_records('local_todolist_items', ['id' => $id, 'userid' => $this->userid]);
     }
+
+    public function getTask(int $id): Task {
+        global $DB;
+        $record = $DB->get_record('local_todolist_items', ['id' => $id, 'userid' => $this->userid], '*', MUST_EXIST);
+        return new Task((int)$record->id, $record->name, (bool)$record->completed);
+    }
 }
