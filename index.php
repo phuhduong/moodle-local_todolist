@@ -13,14 +13,15 @@ $PAGE->set_url(new moodle_url('/local/todolist/index.php'));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('pluginname', 'local_todolist'));
 $PAGE->set_heading(get_string('pluginname', 'local_todolist'));
+$PAGE->requires->css(new moodle_url('/local/todolist/styles.css'));
 
 echo $OUTPUT->header();
 
 $taskmanager = new TaskManager($USER->id);
 $tasks = $taskmanager->loadTasks();
-
 ?>
-    <div>
+
+    <div class="taskinput">
         <input type="text" id="newtaskname" placeholder="New task name">
         <button id="addtask">Add</button>
     </div>
@@ -29,12 +30,10 @@ $tasks = $taskmanager->loadTasks();
 
     <ul id="tasklist">
         <?php foreach ($tasks as $task): ?>
-            <li data-id="<?= $task->getId() ?>">
-            <span class="taskname">
-                <?= $task->isCompleted() ? '<del>' . s($task->getName()) . '</del>' : s($task->getName()) ?>
-            </span>
+            <li data-id="<?= $task->getId() ?>" class="<?= $task->isCompleted() ? 'completed' : '' ?>">
+                <span class="taskname"><?= s($task->getName()) ?></span>
+                <input type="text" class="renameinput" value="<?= s($task->getName()) ?>" style="display: none;">
                 <button class="toggle">Toggle</button>
-                <input type="text" class="renameinput" value="<?= s($task->getName()) ?>">
                 <button class="rename">Rename</button>
                 <button class="delete">Delete</button>
             </li>
@@ -70,14 +69,25 @@ $tasks = $taskmanager->loadTasks();
         document.querySelectorAll('.rename').forEach(btn => {
             btn.addEventListener('click', () => {
                 const li = btn.closest('li');
-                const id = li.dataset.id;
-                const name = li.querySelector('.renameinput').value.trim();
-                fetch('ajax.php?action=rename', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ id, name })
-                }).then(res => res.json())
-                    .then(data => location.reload());
+                const taskname = li.querySelector('.taskname');
+                const input = li.querySelector('.renameinput');
+
+                if (input.style.display === 'none') {
+                    input.style.display = 'inline';
+                    taskname.style.display = 'none';
+                    input.focus();
+                } else {
+                    const id = li.dataset.id;
+                    const name = input.value.trim();
+                    if (!name) return;
+
+                    fetch('ajax.php?action=rename', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({ id, name })
+                    }).then(res => res.json())
+                        .then(data => location.reload());
+                }
             });
         });
 

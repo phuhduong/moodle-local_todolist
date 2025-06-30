@@ -1,0 +1,20 @@
+.taskname.editing {
+    display: none;
+}
+
+.renameinput.editing {
+    display: inline;
+}
+
+.completed {
+    color: gray;
+    text-decoration: line-through;
+}
+
+#tasklist li {
+    margin-bottom: 10px;
+}
+
+input.renameinput {
+    margin-left: 5px;
+}
