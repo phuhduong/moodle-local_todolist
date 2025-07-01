@@ -4,8 +4,6 @@ namespace local_todolist\classes;
 
 require_once(__DIR__ . '/Task.php');
 
-use moodle_database;
-
 class TaskManager {
     public function __construct(
         private int $userid
