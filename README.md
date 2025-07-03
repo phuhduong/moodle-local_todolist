@@ -6,5 +6,5 @@ Clone this repository into your Moodle `local/` directory:
 
 ```bash
 cd /path/to/moodle
-git clone https://github.com/phuhduong/todolist.git local/todolist
+git clone https://github.com/phuhduong/moodle-local_todolist.git local/todolist
 
