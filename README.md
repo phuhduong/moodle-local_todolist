@@ -1,2 +1,10 @@
-# moodle-local_todolist
-Plugin to allow users to add, edit, and delete to-do items
+# Moodle To-Do List Plugin
+A simple local plugin for Moodle that allows users to add, edit, and delete to-do items
+
+## Installation
+Clone this repository into your Moodle `local/` directory:
+
+```bash
+cd /path/to/moodle
+git clone https://github.com/phuhduong/todolist.git local/todolist
+
