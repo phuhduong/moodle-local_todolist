@@ -22,8 +22,9 @@ $tasks = $taskmanager->loadTasks();
 ?>
 
     <div class="taskinput">
-        <input type="text" id="newtaskname" placeholder="New task name">
-        <button id="addtask">Add</button>
+        <label for="newtaskname">New task name</label>
+        <input type="text" id="newtaskname" name="newtaskname" placeholder="New task name">
+        <button type="button" id="addtask">Add</button>
     </div>
 
     <hr>
