@@ -56,10 +56,9 @@ class TaskManager {
         $record->id = $task->getId();
         $record->userid = $this->userid;
         $record->name = $task->getName();
+        $record->completed = 0;
         if ($task->isCompleted()) {
             $record->completed = 1;
-        } else {
-            $record->completed = 0;
         }
 
         $DB->update_record('local_todolist_items', $record);
