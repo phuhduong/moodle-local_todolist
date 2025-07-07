@@ -22,11 +22,13 @@ class local_todolist_task_test extends advanced_testcase {
 
     public function test_constructor_invalid_id() {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Task ID must be a positive integer');
         new Task(id: 0, name: 'Some task');
     }
 
     public function test_constructor_empty_name() {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Task name cannot be empty');
         new Task(id: 1, name: '   ');
     }
 
@@ -39,6 +41,7 @@ class local_todolist_task_test extends advanced_testcase {
     public function test_rename_with_empty_name() {
         $task = new Task(id: 1, name: 'Initial');
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Task name cannot be empty');
         $task->rename('   ');
     }
 

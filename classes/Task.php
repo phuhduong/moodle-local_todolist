@@ -9,12 +9,12 @@ class Task {
         private bool $completed = false
     ) {
         if ($this->id <= 0) {
-            throw new \InvalidArgumentException('Task id must be a positive integer.');
+            throw new \InvalidArgumentException('Task ID must be a positive integer');
         }
 
         $trimmed = trim($this->name);
         if ($trimmed === '') {
-            throw new \InvalidArgumentException('Task name cannot be empty.');
+            throw new \InvalidArgumentException('Task name cannot be empty');
         }
 
         $this->name = $trimmed;
@@ -35,7 +35,7 @@ class Task {
     public function rename(string $name): void {
         $name = trim($name);
         if ($name === '') {
-            throw new \InvalidArgumentException('Task name cannot be empty.');
+            throw new \InvalidArgumentException('Task name cannot be empty');
         }
         $this->name = $name;
     }
