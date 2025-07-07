@@ -1,14 +1,9 @@
 <?php
-$string['pluginname'] = 'To-Do List';
+$string['addfailed'] = 'Failed to add task';
 $string['addtask'] = 'Add task';
-$string['taskname'] = 'Task name';
 $string['completed'] = 'Completed';
-$string['incomplete'] = 'Incomplete';
-$string['edit'] = 'Edit';
 $string['delete'] = 'Delete';
-$string['save'] = 'Save';
-$string['cancel'] = 'Cancel';
-$string['taskadded'] = 'Task added successfully.';
-$string['taskupdated'] = 'Task updated successfully.';
-$string['taskdeleted'] = 'Task deleted.';
-$string['notasks'] = 'No tasks yet.';
+$string['entertaskname'] = 'Enter task name';
+$string['pluginname'] = 'To-Do List';
+$string['rename'] = 'Rename';
+$string['taskname'] = 'Task name';
