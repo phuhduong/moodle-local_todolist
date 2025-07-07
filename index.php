@@ -22,7 +22,7 @@ $tasks = $taskmanager->loadTasks();
 ?>
 
     <div class="taskinput">
-        <label for="newtaskname">New task name</label>
+        <label for="newtaskname" class="accesshide">New task name</label>
         <input type="text" id="newtaskname" name="newtaskname" placeholder="New task name">
         <button type="button" id="addtask">Add</button>
     </div>
@@ -31,12 +31,30 @@ $tasks = $taskmanager->loadTasks();
 
     <ul id="tasklist">
         <?php foreach ($tasks as $task): ?>
-            <li data-id="<?= $task->getId() ?>" class="<?= $task->isCompleted() ? 'completed' : '' ?>">
-                <span class="taskname"><?= s($task->getName()) ?></span>
-                <input type="text" class="renameinput" value="<?= s($task->getName()) ?>" style="display: none;">
-                <button class="toggle">Toggle</button>
-                <button class="rename">Rename</button>
-                <button class="delete">Delete</button>
+            <?php
+            $id = $task->getId();
+            $name = s($task->getName());
+            $completed = $task->isCompleted();
+            $inputid = "renameinput_$id";
+            ?>
+            <li data-id="<?= $id ?>" class="<?= $task->isCompleted() ? 'completed' : '' ?>">
+                <span class="taskname"><?= $name ?>
+
+                <?php if ($completed): ?>
+                    <span class="accesshide">Completed task <?= $name ?></span>
+                <?php endif; ?>
+
+                <label for="<?= $inputid ?>" class="accesshide">Rename task <?= $name ?></label>
+                <input type="text"
+                       id="<?= $inputid ?>"
+                       name="<?= $inputid ?>"
+                       class="renameinput"
+                       value="<?= $name ?>"
+                       style="display: none;">
+
+                <button class="toggle" name="Toggle task <?= $name ?>">Toggle</button>
+                <button class="rename" name="Rename task <?= $name ?>">Rename</button>
+                <button class="delete" name="Delete task <?= $name ?>">Delete</button>
             </li>
         <?php endforeach; ?>
     </ul>
@@ -51,8 +69,8 @@ $tasks = $taskmanager->loadTasks();
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ name })
             }).then(res => res.json())
-                .then(data => location.reload())
-                .catch(err => alert("Failed to add task"));
+                .then(() => location.reload())
+                .catch(() => alert("Failed to add task"));
         });
 
         document.querySelectorAll('.toggle').forEach(btn => {
@@ -63,7 +81,7 @@ $tasks = $taskmanager->loadTasks();
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({ id })
                 }).then(res => res.json())
-                    .then(data => location.reload());
+                    .then(() => location.reload());
             });
         });
 
@@ -87,7 +105,7 @@ $tasks = $taskmanager->loadTasks();
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: new URLSearchParams({ id, name })
                     }).then(res => res.json())
-                        .then(data => location.reload());
+                        .then(() => location.reload());
                 }
             });
         });
@@ -100,10 +118,9 @@ $tasks = $taskmanager->loadTasks();
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({ id })
                 }).then(res => res.json())
-                    .then(data => location.reload());
+                    .then(() => location.reload());
             });
         });
     </script>
 
-<?php
-echo $OUTPUT->footer();
+<?php echo $OUTPUT->footer();
