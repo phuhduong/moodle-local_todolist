@@ -1,0 +1,31 @@
+<div class="taskinput">
+    <label for="newtaskname" class="accesshide">New task name</label>
+    <input type="text" id="newtaskname" name="newtaskname" placeholder="New task name">
+    <button type="button" id="addtask">Add</button>
+</div>
+
+<hr>
+
+<ul id="tasklist">
+    {{#tasks}}
+        <li data-id="{{id}}" class="{{completedclass}}">
+            <span class="taskname">{{name}}</span>
+
+            {{#completed}}
+                <span class="accesshide">Completed task {{name}}</span>
+            {{/completed}}
+
+            <label for="{{inputid}}" class="accesshide">Rename task {{name}}</label>
+            <input type="text"
+                   id="{{inputid}}"
+                   name="{{inputid}}"
+                   class="renameinput"
+                   value="{{name}}"
+                   style="display: none;">
+
+            <button class="toggle" name="Toggle task {{name}}">Toggle</button>
+            <button class="rename" name="Rename task {{name}}">Rename</button>
+            <button class="delete" name="Delete task {{name}}">Delete</button>
+        </li>
+    {{/tasks}}
+</ul>

@@ -8,11 +8,9 @@ define([], function() {
      * Initialize the to-do list actions.
      */
     function init() {
-        // eslint-disable-next-line consistent-return
         document.getElementById('addtask')?.addEventListener('click', () => {
             const name = document.getElementById('newtaskname').value.trim();
             if (!name) {
-                // eslint-disable-next-line no-alert
                 return alert('Enter task name');
             }
 
@@ -29,7 +27,6 @@ define([], function() {
         document.querySelectorAll('.toggle').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.closest('li').dataset.id;
-                // eslint-disable-next-line promise/catch-or-return
                 fetch('ajax.php?action=toggle', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -56,7 +53,6 @@ define([], function() {
                         return;
                     }
 
-                    // eslint-disable-next-line promise/catch-or-return
                     fetch('ajax.php?action=rename', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -70,7 +66,6 @@ define([], function() {
         document.querySelectorAll('.delete').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.closest('li').dataset.id;
-                // eslint-disable-next-line promise/catch-or-return
                 fetch('ajax.php?action=delete', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},

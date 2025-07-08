@@ -21,44 +21,21 @@ echo $OUTPUT->header();
 
 $taskmanager = new TaskManager($USER->id);
 $tasks = $taskmanager->loadTasks();
-?>
 
-    <div class="taskinput">
-        <label for="newtaskname" class="accesshide">New task name</label>
-        <input type="text" id="newtaskname" name="newtaskname" placeholder="New task name">
-        <button type="button" id="addtask">Add</button>
-    </div>
+$templatedata = [
+    'tasks' => []
+];
 
-    <hr>
+foreach ($tasks as $task) {
+    $templatedata['tasks'][] = [
+        'id' => $task->getId(),
+        'name' => s($task->getName()),
+        'completed' => $task->isCompleted(),
+        'inputid' => 'renameinput_' . $task->getId(),
+        'completedclass' => $task->isCompleted() ? 'completed' : ''
+    ];
+}
 
-    <ul id="tasklist">
-        <?php foreach ($tasks as $task): ?>
-            <?php
-            $id = $task->getId();
-            $name = s($task->getName());
-            $completed = $task->isCompleted();
-            $inputid = "renameinput_$id";
-            ?>
-            <li data-id="<?= $id ?>" class="<?= $task->isCompleted() ? 'completed' : '' ?>">
-                <span class="taskname"><?= $name ?>
+echo $OUTPUT->render_from_template('local_todolist/todolist', $templatedata);
 
-                <?php if ($completed): ?>
-                    <span class="accesshide">Completed task <?= $name ?></span>
-                <?php endif; ?>
-
-                <label for="<?= $inputid ?>" class="accesshide">Rename task <?= $name ?></label>
-                <input type="text"
-                       id="<?= $inputid ?>"
-                       name="<?= $inputid ?>"
-                       class="renameinput"
-                       value="<?= $name ?>"
-                       style="display: none;">
-
-                <button class="toggle" name="Toggle task <?= $name ?>">Toggle</button>
-                <button class="rename" name="Rename task <?= $name ?>">Rename</button>
-                <button class="delete" name="Delete task <?= $name ?>">Delete</button>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-
-<?php echo $OUTPUT->footer();
+echo $OUTPUT->footer();
