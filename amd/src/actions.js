@@ -2,7 +2,7 @@
  * @module local_todolist/actions
  */
 
-define([], function() {
+define(['core/ajax'], function(Ajax) {
 
     /**
      * Initialize the to-do list actions.
@@ -14,25 +14,28 @@ define([], function() {
                 return alert('Enter task name');
             }
 
-            fetch('ajax.php?action=add', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: new URLSearchParams({name})
-            }).then(res => res.json())
-                .then(() => location.reload())
-                // eslint-disable-next-line no-alert
-                .catch(() => alert('Failed to add task'));
+            Ajax.call([{
+                methodname: 'local_todolist_add_task',
+                args: { name: name }
+            }])[0].then(() => {
+                location.reload();
+            }).catch(() => {
+                alert('Failed to add task');
+            });
         });
 
         document.querySelectorAll('.toggle').forEach(btn => {
             btn.addEventListener('click', () => {
-                const id = btn.closest('li').dataset.id;
-                fetch('ajax.php?action=toggle', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: new URLSearchParams({id})
-                }).then(res => res.json())
-                    .then(() => location.reload());
+                const id = parseInt(btn.closest('li').dataset.id);
+
+                Ajax.call([{
+                    methodname: 'local_todolist_toggle_task',
+                    args: { id: id }
+                }])[0].then(() => {
+                    location.reload();
+                }).catch(() => {
+                    alert('Failed to toggle task');
+                });
             });
         });
 
@@ -47,31 +50,36 @@ define([], function() {
                     taskname.style.display = 'none';
                     input.focus();
                 } else {
-                    const id = li.dataset.id;
+                    const id = parseInt(li.dataset.id);
                     const name = input.value.trim();
                     if (!name) {
                         return;
                     }
 
-                    fetch('ajax.php?action=rename', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        body: new URLSearchParams({id, name})
-                    }).then(res => res.json())
-                        .then(() => location.reload());
+                    Ajax.call([{
+                        methodname: 'local_todolist_rename_task',
+                        args: { id: id, name: name }
+                    }])[0].then(() => {
+                        location.reload();
+                    }).catch(() => {
+                        alert('Failed to rename task');
+                    });
                 }
             });
         });
 
         document.querySelectorAll('.delete').forEach(btn => {
             btn.addEventListener('click', () => {
-                const id = btn.closest('li').dataset.id;
-                fetch('ajax.php?action=delete', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: new URLSearchParams({id})
-                }).then(res => res.json())
-                    .then(() => location.reload());
+                const id = parseInt(btn.closest('li').dataset.id);
+
+                Ajax.call([{
+                    methodname: 'local_todolist_delete_task',
+                    args: { id: id }
+                }])[0].then(() => {
+                    location.reload();
+                }).catch(() => {
+                    alert('Failed to delete task');
+                });
             });
         });
     }
