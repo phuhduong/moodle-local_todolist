@@ -15,7 +15,7 @@ services:
       - "5432:5432"
 
   moodle:
-    image: moodlehq/moodle-php-apache:latest
+    image: moodlehq/moodle-php-apache:8.3
     container_name: moodle-app
     depends_on:
       - db
