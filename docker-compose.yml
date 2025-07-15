@@ -22,8 +22,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./:/var/www/html
-      - ../moodledata:/var/moodledata
+      - ../../:/var/www/html
+      - ../../moodledata:/var/moodledata
     restart: always
 
 volumes:
