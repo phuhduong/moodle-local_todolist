@@ -35,6 +35,12 @@ jobs:
             cd /var/www/html && \
             composer install"
 
+      - name: Copy plugin into Moodle local dir
+        run: |
+          docker compose exec -T moodle bash -c "
+            mkdir -p /var/www/moodle/local/local_todolist && \
+            cp -r /var/www/html/* /var/www/moodle/local/local_todolist"
+
       - name: Install Moodle & init PHPUnit
         run: |
           docker compose exec -T moodle php admin/cli/install.php \
