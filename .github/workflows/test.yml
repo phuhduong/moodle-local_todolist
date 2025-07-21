@@ -59,9 +59,9 @@ jobs:
             --adminemail=admin@example.com \
             --dbtype=pgsql \
             --dbhost=db \
-            --dbname=${{ secrets.POSTGRES_DB }} \
-            --dbuser=${{ secrets.POSTGRES_USER }} \
-            --dbpass=${{ secrets.POSTGRES_PASSWORD }} \
+            --dbname=$POSTGRES_DB \
+            --dbuser=$POSTGRES_USER \
+            --dbpass=$POSTGRES_PASSWORD \ 
             --wwwroot=http://localhost:8080 \
             --dataroot=/var/moodledata
 
