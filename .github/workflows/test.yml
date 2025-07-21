@@ -28,14 +28,18 @@ jobs:
             sleep 2
           done
 
-      - name: Install Composer and clone Moodle
+      - name: Install Composer
         run: |
           docker compose exec -T moodle bash -c "
             curl -sS https://getcomposer.org/installer | php && \
-            mv composer.phar /usr/local/bin/composer && \
+            mv composer.phar /usr/local/bin/composer"
+
+      - name: Clone Moodle
+        run: |
+          docker compose exec -T moodle bash -c "
             git clone --depth=1 -b MOODLE_401_STABLE https://github.com/moodle/moodle.git /var/www/moodle && \
             cd /var/www/moodle && \
-            composer install --no-dev"
+            composer install --no-dev"          
 
       - name: Copy plugin into Moodle
         run: |
@@ -43,9 +47,9 @@ jobs:
             mkdir -p /var/www/moodle/local/local_todolist && \
             cp -r /var/www/html/* /var/www/moodle/local/local_todolist"
 
-      - name: Install Moodle & init PHPUnit
+      - name: Install Moodle
         run: |
-          docker compose exec -T moodle php admin/cli/install.php \
+          docker compose exec -T moodle php /var/www/moodle/admin/cli/install.php \
             --non-interactive \
             --agree-license \
             --fullname="Test Site" \
@@ -55,16 +59,20 @@ jobs:
             --adminemail=admin@example.com \
             --dbtype=pgsql \
             --dbhost=db \
-            --dbname=${POSTGRES_DB} \
-            --dbuser=${POSTGRES_USER} \
-            --dbpass=${POSTGRES_PASSWORD} \
+            --dbname=${{ secrets.POSTGRES_DB }} \
+            --dbuser=${{ secrets.POSTGRES_USER }} \
+            --dbpass=${{ secrets.POSTGRES_PASSWORD }} \
             --wwwroot=http://localhost:8080 \
             --dataroot=/var/moodledata
 
-          docker compose exec -T moodle php admin/tool/phpunit/cli/init.php
+      - name: Init PHPUnit
+        run: docker compose exec -T moodle php /var/www/moodle/admin/tool/phpunit/cli/init.php
 
       - name: Run PHPUnit tests
-        run: docker compose exec -T moodle vendor/bin/phpunit local_local_todolist
+        run: |
+          docker compose exec -T moodle bash -c "
+            cd /var/www/moodle && \
+            vendor/bin/phpunit local_local_todolist"
 
       - name: Shut down
         if: always()
