@@ -9,6 +9,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: phuhduong-moodle-local_todolist
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,7 +43,7 @@ jobs:
           docker compose exec -T moodle bash -c "
             git clone --depth=1 -b MOODLE_401_STABLE https://github.com/moodle/moodle.git /var/www/moodle && \
             cd /var/www/moodle && \
-            composer install --no-dev"          
+            composer install --no-dev"
 
       - name: Copy plugin into Moodle
         run: |
@@ -52,8 +56,8 @@ jobs:
           docker compose exec -T moodle php /var/www/moodle/admin/cli/install.php \
             --non-interactive \
             --agree-license \
-            --fullname="Test Site" \
-            --shortname="Test" \
+            --fullname='Test Site' \
+            --shortname='Test' \
             --adminuser=admin \
             --adminpass=Admin123! \
             --adminemail=admin@example.com \
