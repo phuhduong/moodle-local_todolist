@@ -28,6 +28,13 @@ jobs:
             sleep 2
           done
 
+      - name: Clone Moodle in container
+        run: |
+          docker compose exec -T moodle bash -c "
+            git clone --depth=1 -b MOODLE_401_STABLE https://github.com/moodle/moodle.git /var/www/html && \
+            cd /var/www/html && \
+            composer install"
+
       - name: Install Moodle & init PHPUnit
         run: |
           docker compose exec -T moodle php admin/cli/install.php \
