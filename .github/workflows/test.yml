@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create .env file from secret
+      - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Set up Docker
@@ -22,18 +22,20 @@ jobs:
       - name: Build and start containers
         run: docker compose up -d --build
 
-      - name: Wait for DB to be ready
+      - name: Wait for DB
         run: |
           until docker compose exec -T db pg_isready -U moodle_user; do 
             sleep 2
           done
 
-      - name: Clone Moodle in container
+      - name: Install Composer and clone Moodle
         run: |
           docker compose exec -T moodle bash -c "
+            curl -sS https://getcomposer.org/installer | php && \
+            mv composer.phar /usr/local/bin/composer && \
             git clone --depth=1 -b MOODLE_401_STABLE https://github.com/moodle/moodle.git /var/www/moodle && \
             cd /var/www/moodle && \
-            composer install"
+            composer install --no-dev"
 
       - name: Copy plugin into Moodle
         run: |
