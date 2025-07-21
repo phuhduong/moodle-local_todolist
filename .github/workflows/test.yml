@@ -20,7 +20,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and start containers
-        working-directory: phuhduong-moodle-local_todolist
         run: docker compose up -d --build
 
       - name: Wait for DB
