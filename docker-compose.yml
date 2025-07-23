@@ -1,6 +1,6 @@
 services:
   moodle:
-    image: moodlehq/moodle-php-apache:8.3
+    build: .
     container_name: moodle-app
     depends_on:
       - db

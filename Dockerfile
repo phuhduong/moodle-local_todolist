@@ -1,9 +1,9 @@
 FROM moodlehq/moodle-php-apache:8.3
 
-# Clone Moodle
-RUN git clone --depth=1 -b MOODLE_500_STABLE https://github.com/moodle/moodle.git /var/www/html
-
 WORKDIR /var/www/html
 
-# Copy plugin
+# Clone Moodle core
+RUN git clone --depth=1 -b MOODLE_500_STABLE https://github.com/moodle/moodle.git .
+
+# Copy the plugin
 COPY . /var/www/html/local/todolist
