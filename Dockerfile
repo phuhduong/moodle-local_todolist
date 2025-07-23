@@ -7,6 +7,3 @@ RUN git clone --depth=1 -b MOODLE_500_STABLE https://github.com/moodle/moodle.gi
 
 # Copy the plugin
 COPY . /var/www/html/local/todolist
-
-# Set correct ownership
-RUN chown -R www-data:www-data /var/www/html

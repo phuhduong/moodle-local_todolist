@@ -29,6 +29,30 @@ jobs:
             sleep 2
           done
 
+      - name: Install Moodle
+        run: |
+          docker compose exec -T moodle bash -c "\
+            php admin/cli/install.php \
+              --non-interactive \
+              --agree-license \
+              --fullname='Test Site' \
+              --shortname='Test' \
+              --adminuser=admin \
+              --adminpass=Admin123! \
+              --adminemail=admin@example.com \
+              --dbtype=pgsql \
+              --dbhost=db \
+              --dbname=${{ vars.POSTGRES_DB }} \
+              --dbuser=${{ vars.POSTGRES_USER }} \
+              --dbpass=${{ vars.POSTGRES_PASSWORD }} \
+              --wwwroot=http://localhost:8080 \
+              --dataroot=/var/www/moodledata && \
+            chown www-data:www-data /var/www/html/config.php"
+
+      - name: Run PHPUnit tests
+        run: |
+          docker compose exec -T moodle vendor/bin/phpunit --testsuite local_todolist_testsuite
+
       - name: Shut down
         if: always()
         run: docker compose down -v
