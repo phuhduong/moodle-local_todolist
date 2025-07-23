@@ -45,8 +45,11 @@ jobs:
       - name: Copy plugin into Moodle
         run: |
           docker compose exec -T moodle bash -c "
-            mkdir -p /var/www/moodle/local/local_todolist && \
-            cp -r /var/www/html/* /var/www/moodle/local/local_todolist"
+            mkdir -p /var/www/moodle/local/todolist && \
+            cp -r /var/www/html/* /var/www/moodle/local/todolist"
+
+      - name: Create PHPUnit data root
+        run: docker compose exec -T moodle mkdir -p /var/moodledata_phpunit
 
       - name: Install Moodle
         run: |
@@ -66,6 +69,20 @@ jobs:
             --wwwroot=http://localhost:8080 \
             --dataroot=/var/moodledata
 
+      - name: Inject PHPUnit config
+        run: |
+          docker compose exec -T moodle bash -c "
+            sed -i \"/require_once/i \
+            \\$CFG->phpunit_dataroot = '/var/moodledata_phpunit';\
+            \\$CFG->phpunit_prefix = 'phpu_';\
+            \\$CFG->phpunit_dbtype = 'pgsql';\
+            \\$CFG->phpunit_dblibrary = 'native';\
+            \\$CFG->phpunit_dbhost = 'db';\
+            \\$CFG->phpunit_dbname = '${{ vars.POSTGRES_DB }}';\
+            \\$CFG->phpunit_dbuser = '${{ vars.POSTGRES_USER }}';\
+            \\$CFG->phpunit_dbpass = '${{ vars.POSTGRES_PASSWORD }}';\
+            \" /var/www/moodle/config.php"
+
       - name: Init PHPUnit
         run: docker compose exec -T moodle php /var/www/moodle/admin/tool/phpunit/cli/init.php
 
@@ -73,7 +90,7 @@ jobs:
         run: |
           docker compose exec -T moodle bash -c "
             cd /var/www/moodle && \
-            vendor/bin/phpunit local_local_todolist"
+            vendor/bin/phpunit local/todolist"
 
       - name: Shut down
         if: always()
