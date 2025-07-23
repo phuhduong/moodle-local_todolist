@@ -50,8 +50,7 @@ jobs:
             chown www-data:www-data /var/www/html/config.php"
 
       - name: Run PHPUnit tests
-        run: |
-          docker compose exec -T moodle vendor/bin/phpunit --testsuite local_todolist_testsuite
+        run: docker compose exec -T moodle phpunit --testsuite local_todolist_testsuite
 
       - name: Shut down
         if: always()
