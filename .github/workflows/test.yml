@@ -62,7 +62,7 @@ jobs:
             --dbhost=db \
             --dbname=${{ vars.POSTGRES_DB }} \
             --dbuser=${{ vars.POSTGRES_USER }} \
-            --dbpass=${{ vars.POSTGRES_PASSWORD }} \ 
+            --dbpass=${{ vars.POSTGRES_PASSWORD }} \
             --wwwroot=http://localhost:8080 \
             --dataroot=/var/moodledata
 
