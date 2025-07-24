@@ -49,6 +49,9 @@ jobs:
               --dataroot=/var/www/moodledata && \
             chown www-data:www-data /var/www/html/config.php"
 
+      - name: Init Moodle test env
+        run: docker compose exec -T moodle php admin/tool/phpunit/cli/init.php
+
       - name: Run tests
         run: |
           docker compose exec -T moodle phpunit /var/www/html/local/todolist/tests/task_test.php
