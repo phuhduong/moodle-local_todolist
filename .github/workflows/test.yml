@@ -49,8 +49,10 @@ jobs:
               --dataroot=/var/www/moodledata && \
             chown www-data:www-data /var/www/html/config.php"
 
-      - name: Run PHPUnit tests
-        run: docker compose exec -T moodle phpunit --testsuite local_todolist_testsuite
+      - name: Run tests
+        run: |
+          docker compose exec -T moodle phpunit /var/www/html/local/todolist/tests/task_test.php
+          docker compose exec -T moodle phpunit /var/www/html/local/todolist/tests/taskmanager_test.php
 
       - name: Shut down
         if: always()
